@@ -65,7 +65,7 @@ func (c *Client) ProxyRequest(path string) (*RequestMetrics, error) {
 
 	// Validate JSON response
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		var jsonCheck interface{}
+		var jsonCheck any
 		if err := json.Unmarshal(body, &jsonCheck); err != nil {
 			metrics.Error = err
 			return metrics, fmt.Errorf("invalid JSON response: %w", err)

@@ -56,7 +56,7 @@ func (r *ProblemRepository) List(filters ProblemFilters) ([]models.Problem, erro
 		INNER JOIN api_requests r ON p.request_id = r.id
 	`
 	where := []string{}
-	args := []interface{}{}
+	args := []any{}
 
 	if filters.Method != "" {
 		where = append(where, "r.method = ?")

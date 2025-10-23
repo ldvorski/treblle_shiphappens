@@ -51,7 +51,7 @@ func (r *RequestRepository) Create(req *models.APIRequest) (int64, error) {
 func (r *RequestRepository) List(filters RequestFilters) ([]models.APIRequest, error) {
 	query := "SELECT id, method, path, response_status, response_time_ms, created_at FROM api_requests"
 	where := []string{}
-	args := []interface{}{}
+	args := []any{}
 
 	if filters.Method != "" {
 		where = append(where, "method = ?")
