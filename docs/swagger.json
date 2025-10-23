@@ -476,6 +476,7 @@
                 ],
                 "tags": [
                     "requests",
+                    "download",
                     "csv",
                     "filter",
                     "order",

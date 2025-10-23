@@ -109,7 +109,7 @@ func (h *RequestHandler) TableView(c *gin.Context) {
 // CSVExport godoc
 // @Summary      Export successfully completed API requests as CSV
 // @Description  Download successfully completed API requests as a CSV file, supports filtering, ordering and searching, ready for use
-// @Tags         requests, csv, filter, order, search
+// @Tags         requests, download, csv, filter, order, search
 // @Accept       json
 // @Produce      text/csv
 // @Param        method         query    string  false  "HTTP method filter (GET, POST, etc.)"

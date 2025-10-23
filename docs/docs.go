@@ -478,6 +478,7 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "requests",
+                    "download",
                     "csv",
                     "filter",
                     "order",

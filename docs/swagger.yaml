@@ -385,6 +385,7 @@ paths:
       summary: Export successfully completed API requests as CSV
       tags:
       - requests
+      - download
       - csv
       - filter
       - order
