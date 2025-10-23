@@ -34,7 +34,7 @@ func NewJikanHandler(
 // ProxyRequest godoc
 // @Summary      Proxy request to Jikan API
 // @Description  Forwards requests to the Jikan API, logs metrics, and detects problems (404, 403, 400, slow responses, etc.). Returns the proxied response with the same status code from Jikan.
-// @Tags         jikan
+// @Tags         jikan, external
 // @Accept       json
 // @Produce      json
 // @Param        path  path  string  true  "Jikan API path (e.g., /anime/1, /manga/2)"

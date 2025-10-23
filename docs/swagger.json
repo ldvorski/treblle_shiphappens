@@ -31,7 +31,8 @@
                     "application/json"
                 ],
                 "tags": [
-                    "jikan"
+                    "jikan",
+                    "external"
                 ],
                 "summary": "Proxy request to Jikan API",
                 "parameters": [
@@ -78,8 +79,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "problem",
-                    "fail",
+                    "problems",
                     "list",
                     "order",
                     "search",
@@ -178,8 +178,7 @@
                     "text/csv"
                 ],
                 "tags": [
-                    "problem",
-                    "fail",
+                    "problems",
                     "csv",
                     "download",
                     "search",
@@ -278,13 +277,11 @@
                     "application/json"
                 ],
                 "tags": [
-                    "problem",
-                    "fail",
+                    "problems",
                     "order",
                     "filter",
                     "search",
-                    "table",
-                    "processing"
+                    "table"
                 ],
                 "summary": "Table of failed or problematic API calls",
                 "parameters": [
@@ -383,9 +380,7 @@
                     "filter",
                     "order",
                     "search",
-                    "list",
-                    "successful",
-                    "completed"
+                    "list"
                 ],
                 "summary": "List of API requests successfully completed",
                 "parameters": [
@@ -481,8 +476,6 @@
                 ],
                 "tags": [
                     "requests",
-                    "successful",
-                    "completed",
                     "csv",
                     "filter",
                     "order",
@@ -582,12 +575,9 @@
                 "tags": [
                     "requests",
                     "table",
-                    "successful",
-                    "completed",
                     "search",
                     "filter",
-                    "order",
-                    "processing"
+                    "order"
                 ],
                 "summary": "Table of successfully completed API request calls",
                 "parameters": [

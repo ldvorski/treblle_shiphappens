@@ -49,6 +49,7 @@ paths:
       summary: Proxy request to Jikan API
       tags:
       - jikan
+      - external
   /problems:
     get:
       consumes:
@@ -112,8 +113,7 @@ paths:
             type: object
       summary: List detected failed or problematic API calls
       tags:
-      - problem
-      - fail
+      - problems
       - list
       - order
       - search
@@ -180,8 +180,7 @@ paths:
             type: object
       summary: Export failed and problematic API calls as CSV
       tags:
-      - problem
-      - fail
+      - problems
       - csv
       - download
       - search
@@ -250,13 +249,11 @@ paths:
             type: object
       summary: Table of failed or problematic API calls
       tags:
-      - problem
-      - fail
+      - problems
       - order
       - filter
       - search
       - table
-      - processing
   /requests:
     get:
       consumes:
@@ -325,8 +322,6 @@ paths:
       - order
       - search
       - list
-      - successful
-      - completed
   /requests/csv:
     get:
       consumes:
@@ -390,8 +385,6 @@ paths:
       summary: Export successfully completed API requests as CSV
       tags:
       - requests
-      - successful
-      - completed
       - csv
       - filter
       - order
@@ -462,12 +455,9 @@ paths:
       tags:
       - requests
       - table
-      - successful
-      - completed
       - search
       - filter
       - order
-      - processing
 schemes:
 - http
 - https

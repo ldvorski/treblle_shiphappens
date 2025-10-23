@@ -22,7 +22,7 @@ func NewProblemHandler(repo *repository.ProblemRepository) *ProblemHandler {
 // ListProblems godoc
 // @Summary      List detected failed or problematic API calls
 // @Description  Get a list of detected failed or problematic API calls with optional filtering, ordering and searching
-// @Tags         problem, fail, list, order, search, filter
+// @Tags         problems, list, order, search, filter
 // @Accept       json
 // @Produce      json
 // @Param        method         query    string  false  "HTTP method filter (GET, POST, etc.)"
@@ -59,7 +59,7 @@ func (h *ProblemHandler) ListProblems(c *gin.Context) {
 // TableView godoc
 // @Summary      Table of failed or problematic API calls
 // @Description  Get an ordered table of failed or problematic external API calls, optional filtering, ordering and searching, intended for further processing
-// @Tags         problem, fail, order, filter, search, table, processing
+// @Tags         problems, order, filter, search, table
 // @Accept       json
 // @Produce      json
 // @Param        method         query    string  false  "HTTP method filter (GET, POST, etc.)"
@@ -112,7 +112,7 @@ func (h *ProblemHandler) TableView(c *gin.Context) {
 // CSVExport godoc
 // @Summary      Export failed and problematic API calls as CSV
 // @Description  Download detected failed or problematic API calls as a CSV file, optional filtering, ordering and searching, ready for use or storing
-// @Tags         problem, fail, csv, download, search, filter, order
+// @Tags         problems, csv, download, search, filter, order
 // @Accept       json
 // @Produce      text/csv
 // @Param        method         query    string  false  "HTTP method filter (GET, POST, etc.)"

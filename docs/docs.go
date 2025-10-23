@@ -33,7 +33,8 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "jikan"
+                    "jikan",
+                    "external"
                 ],
                 "summary": "Proxy request to Jikan API",
                 "parameters": [
@@ -80,8 +81,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "problem",
-                    "fail",
+                    "problems",
                     "list",
                     "order",
                     "search",
@@ -180,8 +180,7 @@ const docTemplate = `{
                     "text/csv"
                 ],
                 "tags": [
-                    "problem",
-                    "fail",
+                    "problems",
                     "csv",
                     "download",
                     "search",
@@ -280,13 +279,11 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "problem",
-                    "fail",
+                    "problems",
                     "order",
                     "filter",
                     "search",
-                    "table",
-                    "processing"
+                    "table"
                 ],
                 "summary": "Table of failed or problematic API calls",
                 "parameters": [
@@ -385,9 +382,7 @@ const docTemplate = `{
                     "filter",
                     "order",
                     "search",
-                    "list",
-                    "successful",
-                    "completed"
+                    "list"
                 ],
                 "summary": "List of API requests successfully completed",
                 "parameters": [
@@ -483,8 +478,6 @@ const docTemplate = `{
                 ],
                 "tags": [
                     "requests",
-                    "successful",
-                    "completed",
                     "csv",
                     "filter",
                     "order",
@@ -584,12 +577,9 @@ const docTemplate = `{
                 "tags": [
                     "requests",
                     "table",
-                    "successful",
-                    "completed",
                     "search",
                     "filter",
-                    "order",
-                    "processing"
+                    "order"
                 ],
                 "summary": "Table of successfully completed API request calls",
                 "parameters": [

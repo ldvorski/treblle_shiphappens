@@ -22,7 +22,7 @@ func NewRequestHandler(repo *repository.RequestRepository) *RequestHandler {
 // ListRequests godoc
 // @Summary      List of API requests successfully completed
 // @Description  Get a list of logged API requests calls with optional filtering, ordering and searching
-// @Tags         requests, filter, order, search, list, successful, completed
+// @Tags         requests, filter, order, search, list
 // @Accept       json
 // @Produce      json
 // @Param        method         query    string  false  "HTTP method filter (GET, POST, etc.)"
@@ -59,7 +59,7 @@ func (h *RequestHandler) ListRequests(c *gin.Context) {
 // TableView godoc
 // @Summary      Table of successfully completed API request calls
 // @Description  Get successfully completed API request calls formatted for table display after further proccessing with columns and rows, supports ordering, filtering and searching
-// @Tags         requests, table, successful, completed, search, filter, order, processing
+// @Tags         requests, table, search, filter, order
 // @Accept       json
 // @Produce      json
 // @Param        method         query    string  false  "HTTP method filter (GET, POST, etc.)"
@@ -109,7 +109,7 @@ func (h *RequestHandler) TableView(c *gin.Context) {
 // CSVExport godoc
 // @Summary      Export successfully completed API requests as CSV
 // @Description  Download successfully completed API requests as a CSV file, supports filtering, ordering and searching, ready for use
-// @Tags         requests, successful, completed, csv, filter, order, search
+// @Tags         requests, csv, filter, order, search
 // @Accept       json
 // @Produce      text/csv
 // @Param        method         query    string  false  "HTTP method filter (GET, POST, etc.)"
