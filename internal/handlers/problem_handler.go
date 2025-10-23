@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/csv"
 	"net/http"
 	"strconv"
 	"time"
@@ -67,6 +69,47 @@ func (h *ProblemHandler) TableView(c *gin.Context) {
 			"offset": filters.Offset,
 		},
 	})
+}
+
+func (h *ProblemHandler) CSVExport(c *gin.Context) {
+	filters := parseProblemFilters(c)
+	problems, err := h.repo.List(filters)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Create CSV writer
+	var buf bytes.Buffer
+	writer := csv.NewWriter(&buf)
+
+	// Write header
+	writer.Write([]string{"problem_type", "description", "method", "response", "path", "response_time", "threshold_ms", "created_at"})
+
+	// Write rows
+	for _, p := range problems {
+		writer.Write([]string{
+			p.ProblemType,
+			p.Description,
+			p.Method,
+			strconv.Itoa(p.ResponseStatus),
+			p.Path,
+			strconv.FormatInt(p.ResponseTimeMs, 10),
+			strconv.FormatInt(p.ThresholdMs, 10),
+			p.CreatedAt.Format(time.RFC3339),
+		})
+	}
+
+	// Flush to ensure all data is written
+	writer.Flush()
+	if err := writer.Error(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate CSV"})
+		return
+	}
+
+	c.Header("Content-Type", "text/csv")
+	c.Header("Content-Disposition", "attachment; filename=requests.csv")
+	c.String(http.StatusOK, buf.String())
 }
 
 func parseProblemFilters(c *gin.Context) repository.ProblemFilters {

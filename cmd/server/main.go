@@ -44,10 +44,12 @@ func main() {
 		// Request viewing endpoints
 		api.GET("/requests", requestHandler.ListRequests)
 		api.GET("/requests/table", requestHandler.TableView)
+		api.GET("/requests/csv", requestHandler.CSVExport)
 
 		// Problem viewing endpoints
 		api.GET("/problems", problemHandler.ListProblems)
 		api.GET("/problems/table", problemHandler.TableView)
+		api.GET("/problems/csv", problemHandler.CSVExport)
 
 		// Jikan proxy endpoint - matches any path
 		api.GET("/jikan/*path", jikanHandler.ProxyRequest)

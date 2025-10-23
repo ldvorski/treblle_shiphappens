@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/csv"
 	"net/http"
 	"strconv"
 	"time"
@@ -64,6 +66,41 @@ func (h *RequestHandler) TableView(c *gin.Context) {
 			"offset": filters.Offset,
 		},
 	})
+}
+
+func (h *RequestHandler) CSVExport(c *gin.Context) {
+	filters := parseRequestFilters(c)
+	requests, err := h.repo.List(filters)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	//Create CSV writer
+	var buf bytes.Buffer
+	writer := csv.NewWriter(&buf)
+
+	//Build CSV
+	writer.Write([]string{"method", "response", "path", "response_time", "created_at"})
+	for _, req := range requests {
+		writer.Write([]string{
+			req.Method,
+			strconv.Itoa(req.ResponseStatus),
+			req.Path,
+			strconv.FormatInt(req.ResponseTimeMs, 10),
+			req.CreatedAt.Format(time.RFC3339),
+		})
+	}
+
+	writer.Flush()
+	if err := writer.Error(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate CSV"})
+		return
+	}
+
+	c.Header("Content-Type", "text/csv")
+	c.Header("Content-Disposition", "attachment; filename=requests.csv")
+	c.String(http.StatusOK, buf.String())
 }
 
 func parseRequestFilters(c *gin.Context) repository.RequestFilters {
