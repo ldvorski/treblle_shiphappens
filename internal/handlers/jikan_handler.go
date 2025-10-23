@@ -14,13 +14,13 @@ import (
 const SlowResponseThresholdMs = 400
 
 type JikanHandler struct {
-	jikanClient *jikan.Client
+	jikanClient jikan.JikanClient
 	requestRepo *repository.RequestRepository
 	problemRepo *repository.ProblemRepository
 }
 
 func NewJikanHandler(
-	jikanClient *jikan.Client,
+	jikanClient jikan.JikanClient,
 	requestRepo *repository.RequestRepository,
 	problemRepo *repository.ProblemRepository,
 ) *JikanHandler {
@@ -31,6 +31,17 @@ func NewJikanHandler(
 	}
 }
 
+// ProxyRequest godoc
+// @Summary      Proxy request to Jikan API
+// @Description  Forwards requests to the Jikan API, logs metrics, and detects problems (404, 403, 400, slow responses, etc.). Returns the proxied response with the same status code from Jikan.
+// @Tags         jikan
+// @Accept       json
+// @Produce      json
+// @Param        path  path  string  true  "Jikan API path (e.g., /anime/1, /manga/2)"
+// @Success      200  {object}  map[string]interface{}  "Successfully proxied response from Jikan API (returns whatever status Jikan returns: 200, 404, etc.)"
+// @Failure      500  {object}  map[string]interface{}  "Failed to log request to database (request not recorded)"
+// @Failure      502  {object}  map[string]interface{}  "Failed to fetch from Jikan API due to network error (request is still logged with status 0)"
+// @Router       /jikan/{path} [get]
 func (h *JikanHandler) ProxyRequest(c *gin.Context) {
 	path := c.Param("path")
 	if path == "" {

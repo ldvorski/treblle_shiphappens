@@ -1,0 +1,481 @@
+basePath: /api
+host: localhost:8080
+info:
+  contact:
+    email: lovro.dvorski@outlook.com
+    name: API Support
+  description: API monitoring service that proxies requests to Jikan API and tracks
+    performance metrics and issues.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Treblle API Monitor
+  version: "1.0"
+paths:
+  /jikan/{path}:
+    get:
+      consumes:
+      - application/json
+      description: Forwards requests to the Jikan API, logs metrics, and detects problems
+        (404, 403, 400, slow responses, etc.). Returns the proxied response with the
+        same status code from Jikan.
+      parameters:
+      - description: Jikan API path (e.g., /anime/1, /manga/2)
+        in: path
+        name: path
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Successfully proxied response from Jikan API (returns whatever
+            status Jikan returns: 200, 404, etc.)'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Failed to log request to database (request not recorded)
+          schema:
+            additionalProperties: true
+            type: object
+        "502":
+          description: Failed to fetch from Jikan API due to network error (request
+            is still logged with status 0)
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Proxy request to Jikan API
+      tags:
+      - jikan
+  /problems:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of detected failed or problematic API calls with optional
+        filtering, ordering and searching
+      parameters:
+      - description: HTTP method filter (GET, POST, etc.)
+        in: query
+        name: method
+        type: string
+      - description: Response status code filter
+        in: query
+        name: response
+        type: integer
+      - description: Minimum response time in milliseconds
+        in: query
+        name: min_time
+        type: integer
+      - description: Maximum response time in milliseconds
+        in: query
+        name: max_time
+        type: integer
+      - description: 'Filter problems created after date (format: 2006-01-02)'
+        in: query
+        name: created_after
+        type: string
+      - description: 'Filter problems created before date (format: 2006-01-02)'
+        in: query
+        name: created_before
+        type: string
+      - description: Search in request path
+        in: query
+        name: search
+        type: string
+      - description: Sort by field (response_time, created_at)
+        in: query
+        name: sort
+        type: string
+      - description: 'Maximum number of results (default: 100)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Number of results to skip (default: 0)'
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of problems with metadata
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List detected failed or problematic API calls
+      tags:
+      - problem
+      - fail
+      - list
+      - order
+      - search
+      - filter
+  /problems/csv:
+    get:
+      consumes:
+      - application/json
+      description: Download detected failed or problematic API calls as a CSV file,
+        optional filtering, ordering and searching, ready for use or storing
+      parameters:
+      - description: HTTP method filter (GET, POST, etc.)
+        in: query
+        name: method
+        type: string
+      - description: Response status code filter
+        in: query
+        name: response
+        type: integer
+      - description: Minimum response time in milliseconds
+        in: query
+        name: min_time
+        type: integer
+      - description: Maximum response time in milliseconds
+        in: query
+        name: max_time
+        type: integer
+      - description: 'Filter problems created after date (format: 2006-01-02)'
+        in: query
+        name: created_after
+        type: string
+      - description: 'Filter problems created before date (format: 2006-01-02)'
+        in: query
+        name: created_before
+        type: string
+      - description: Search in request path
+        in: query
+        name: search
+        type: string
+      - description: Sort by field (response_time, created_at)
+        in: query
+        name: sort
+        type: string
+      - description: 'Maximum number of results (default: 100)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Number of results to skip (default: 0)'
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - text/csv
+      responses:
+        "200":
+          description: CSV file download
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Export failed and problematic API calls as CSV
+      tags:
+      - problem
+      - fail
+      - csv
+      - download
+      - search
+      - filter
+      - order
+  /problems/table:
+    get:
+      consumes:
+      - application/json
+      description: Get an ordered table of failed or problematic external API calls,
+        optional filtering, ordering and searching, intended for further processing
+      parameters:
+      - description: HTTP method filter (GET, POST, etc.)
+        in: query
+        name: method
+        type: string
+      - description: Response status code filter
+        in: query
+        name: response
+        type: integer
+      - description: Minimum response time in milliseconds
+        in: query
+        name: min_time
+        type: integer
+      - description: Maximum response time in milliseconds
+        in: query
+        name: max_time
+        type: integer
+      - description: 'Filter problems created after date (format: 2006-01-02)'
+        in: query
+        name: created_after
+        type: string
+      - description: 'Filter problems created before date (format: 2006-01-02)'
+        in: query
+        name: created_before
+        type: string
+      - description: Search in request path
+        in: query
+        name: search
+        type: string
+      - description: Sort by field (response_time, created_at)
+        in: query
+        name: sort
+        type: string
+      - description: 'Maximum number of results (default: 100)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Number of results to skip (default: 0)'
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Table data with columns and rows
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Table of failed or problematic API calls
+      tags:
+      - problem
+      - fail
+      - order
+      - filter
+      - search
+      - table
+      - processing
+  /requests:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of logged API requests calls with optional filtering,
+        ordering and searching
+      parameters:
+      - description: HTTP method filter (GET, POST, etc.)
+        in: query
+        name: method
+        type: string
+      - description: Response status code filter
+        in: query
+        name: response
+        type: integer
+      - description: Minimum response time in milliseconds
+        in: query
+        name: min_time
+        type: integer
+      - description: Maximum response time in milliseconds
+        in: query
+        name: max_time
+        type: integer
+      - description: 'Filter requests created after date (format: 2006-01-02)'
+        in: query
+        name: created_after
+        type: string
+      - description: 'Filter requests created before date (format: 2006-01-02)'
+        in: query
+        name: created_before
+        type: string
+      - description: Search in request path
+        in: query
+        name: search
+        type: string
+      - description: Sort by field (response_time, created_at)
+        in: query
+        name: sort
+        type: string
+      - description: 'Maximum number of results (default: 100)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Number of results to skip (default: 0)'
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of requests with metadata
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List of API requests successfully completed
+      tags:
+      - requests
+      - filter
+      - order
+      - search
+      - list
+      - successful
+      - completed
+  /requests/csv:
+    get:
+      consumes:
+      - application/json
+      description: Download successfully completed API requests as a CSV file, supports
+        filtering, ordering and searching, ready for use
+      parameters:
+      - description: HTTP method filter (GET, POST, etc.)
+        in: query
+        name: method
+        type: string
+      - description: Response status code filter
+        in: query
+        name: response
+        type: integer
+      - description: Minimum response time in milliseconds
+        in: query
+        name: min_time
+        type: integer
+      - description: Maximum response time in milliseconds
+        in: query
+        name: max_time
+        type: integer
+      - description: 'Filter requests created after date (format: 2006-01-02)'
+        in: query
+        name: created_after
+        type: string
+      - description: 'Filter requests created before date (format: 2006-01-02)'
+        in: query
+        name: created_before
+        type: string
+      - description: Search in request path
+        in: query
+        name: search
+        type: string
+      - description: Sort by field (response_time, created_at)
+        in: query
+        name: sort
+        type: string
+      - description: 'Maximum number of results (default: 100)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Number of results to skip (default: 0)'
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - text/csv
+      responses:
+        "200":
+          description: CSV file download
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Export successfully completed API requests as CSV
+      tags:
+      - requests
+      - successful
+      - completed
+      - csv
+      - filter
+      - order
+      - search
+  /requests/table:
+    get:
+      consumes:
+      - application/json
+      description: Get successfully completed API request calls formatted for table
+        display after further proccessing with columns and rows, supports ordering,
+        filtering and searching
+      parameters:
+      - description: HTTP method filter (GET, POST, etc.)
+        in: query
+        name: method
+        type: string
+      - description: Response status code filter
+        in: query
+        name: response
+        type: integer
+      - description: Minimum response time in milliseconds
+        in: query
+        name: min_time
+        type: integer
+      - description: Maximum response time in milliseconds
+        in: query
+        name: max_time
+        type: integer
+      - description: 'Filter requests created after date (format: 2006-01-02)'
+        in: query
+        name: created_after
+        type: string
+      - description: 'Filter requests created before date (format: 2006-01-02)'
+        in: query
+        name: created_before
+        type: string
+      - description: Search in request path
+        in: query
+        name: search
+        type: string
+      - description: Sort by field (response_time, created_at)
+        in: query
+        name: sort
+        type: string
+      - description: 'Maximum number of results (default: 100)'
+        in: query
+        name: limit
+        type: integer
+      - description: 'Number of results to skip (default: 0)'
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Table data with columns and rows
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Table of successfully completed API request calls
+      tags:
+      - requests
+      - table
+      - successful
+      - completed
+      - search
+      - filter
+      - order
+      - processing
+schemes:
+- http
+- https
+swagger: "2.0"
+tags:
+- description: Operations for viewing API request call logs
+  name: requests
+- description: Operations for viewing detected failed or problematic API calls
+  name: problems
+- description: Proxy to Jikan API with monitoring
+  name: jikan

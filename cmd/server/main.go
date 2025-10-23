@@ -2,13 +2,42 @@ package main
 
 import (
 	"log"
+	_ "treblle_project/docs"
 	"treblle_project/internal/database"
 	"treblle_project/internal/handlers"
 	"treblle_project/internal/jikan"
 	"treblle_project/internal/repository"
 
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	"github.com/gin-gonic/gin"
 )
+
+// @title           Treblle API Monitor
+// @version         1.0
+// @description     API monitoring service that proxies requests to Jikan API and tracks performance metrics and issues.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.email  lovro.dvorski@outlook.com
+
+// @license.name  MIT
+// @license.url   https://opensource.org/licenses/MIT
+
+// @host      localhost:8080
+// @BasePath  /api
+
+// @schemes http https
+
+// @tag.name requests
+// @tag.description Operations for viewing API request call logs
+
+// @tag.name problems
+// @tag.description Operations for viewing detected failed or problematic API calls
+
+// @tag.name jikan
+// @tag.description Proxy to Jikan API with monitoring
 
 func main() {
 	// Initialize database
@@ -56,9 +85,16 @@ func main() {
 	}
 
 	// Health check
+	// @Summary      Health check
+	// @Description  Check if the API is running
+	// @Tags         health
+	// @Produce      json
+	// @Success      200  {object}  map[string]string
+	// @Router       /health [get]
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	log.Println("Server starting on :8080")
 	if err := r.Run(":8080"); err != nil {
