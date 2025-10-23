@@ -4,22 +4,20 @@ import (
 	"strings"
 	"testing"
 	"time"
-	"treblle_project/internal/testutil"
 )
 
 // Test 1: Basic Create
 func TestProblemRepository_Create(t *testing.T) {
-	db := testutil.SetupTestDB(t)
+	db := setupTestDB(t)
 	defer db.Close()
 
-	requestRepo := NewRequestRepository(db)
 	problemRepo := NewProblemRepository(db)
 
 	// Create a problem
-	
-	id := testutil.CreateTestProblem(t, problemRepo, 
-	int(testutil.CreateTestRequest(t, requestRepo, "GET", "/anime/999", 404, 100)),
-	"not_found", "Resource not found", 0)
+
+	id := createTestProblem(t, db,
+		int(createTestRequest(t, db, "GET", "/anime/999", 404, 100)),
+		"not_found", "Resource not found", 0)
 
 	if id <= 0 {
 		t.Errorf("Expected positive ID, got %d", id)
@@ -43,16 +41,15 @@ func TestProblemRepository_Create(t *testing.T) {
 
 // Test 2: Filter by Method
 func TestProblemRepository_FilterByMethod(t *testing.T) {
-	db := testutil.SetupTestDB(t)
+	db := setupTestDB(t)
 	defer db.Close()
 
-	requestRepo := NewRequestRepository(db)
 	problemRepo := NewProblemRepository(db)
 
 	// Create test data
-	testutil.CreateTestProblem(t, problemRepo, int(testutil.CreateTestRequest(t, requestRepo, "GET", "/test1", 404, 100)), "not_found", "Not found", 0)
-	testutil.CreateTestProblem(t, problemRepo, int(testutil.CreateTestRequest(t, requestRepo, "POST", "/test2", 404, 200)), "not_found", "Not found", 0)
-	testutil.CreateTestProblem(t, problemRepo, int(testutil.CreateTestRequest(t, requestRepo, "GET", "/test3", 404, 300)), "not_found", "Not found", 0)
+	createTestProblem(t, db, int(createTestRequest(t, db, "GET", "/test1", 404, 100)), "not_found", "Not found", 0)
+	createTestProblem(t, db, int(createTestRequest(t, db, "POST", "/test2", 404, 200)), "not_found", "Not found", 0)
+	createTestProblem(t, db, int(createTestRequest(t, db, "GET", "/test3", 404, 300)), "not_found", "Not found", 0)
 
 	// Filter by GET method
 	filters := ProblemFilters{Method: "GET", Limit: 100}
@@ -74,15 +71,14 @@ func TestProblemRepository_FilterByMethod(t *testing.T) {
 
 // Test 3: Filter by Response Status
 func TestProblemRepository_FilterByResponseStatus(t *testing.T) {
-	db := testutil.SetupTestDB(t)
+	db := setupTestDB(t)
 	defer db.Close()
 
-	requestRepo := NewRequestRepository(db)
 	problemRepo := NewProblemRepository(db)
 
 	// Create test data with different status codes
-	testutil.CreateTestProblem(t, problemRepo, int(testutil.CreateTestRequest(t, requestRepo, "GET", "/missing", 404, 100)), "not_found", "Not found", 0)
-	testutil.CreateTestProblem(t, problemRepo, int(testutil.CreateTestRequest(t, requestRepo, "GET", "/forbidden", 403, 200)), "forbidden", "Forbidden", 0)
+	createTestProblem(t, db, int(createTestRequest(t, db, "GET", "/missing", 404, 100)), "not_found", "Not found", 0)
+	createTestProblem(t, db, int(createTestRequest(t, db, "GET", "/forbidden", 403, 200)), "forbidden", "Forbidden", 0)
 
 	// Filter by 404 status
 	filters := ProblemFilters{Response: 404, Limit: 100}
@@ -102,21 +98,20 @@ func TestProblemRepository_FilterByResponseStatus(t *testing.T) {
 
 // Test 4: Search functionality
 func TestProblemRepository_Search(t *testing.T) {
-	db := testutil.SetupTestDB(t)
+	db := setupTestDB(t)
 	defer db.Close()
 
-	requestRepo := NewRequestRepository(db)
 	problemRepo := NewProblemRepository(db)
 
 	// Create test data with different paths
-	testutil.CreateTestProblem(t, problemRepo,
-		int(testutil.CreateTestRequest(t, requestRepo, "GET", "/anime/1", 404, 100)),
+	createTestProblem(t, db,
+		int(createTestRequest(t, db, "GET", "/anime/1", 404, 100)),
 		"not_found", "Anime not found", 0)
-	testutil.CreateTestProblem(t, problemRepo, 
-		int(testutil.CreateTestRequest(t, requestRepo, "GET", "/manga/1", 404, 200)),
+	createTestProblem(t, db,
+		int(createTestRequest(t, db, "GET", "/manga/1", 404, 200)),
 		"not_found", "Manga not found", 0)
-	testutil.CreateTestProblem(t, problemRepo,
-		int(testutil.CreateTestRequest(t, requestRepo, "GET", "/anime/characters", 404, 300)),
+	createTestProblem(t, db,
+		int(createTestRequest(t, db, "GET", "/anime/characters", 404, 300)),
 		"not_found", "Characters not found", 0)
 
 	// Search for "anime"
@@ -139,18 +134,17 @@ func TestProblemRepository_Search(t *testing.T) {
 
 // Test 5: Filter by Response Time
 func TestProblemRepository_FilterByResponseTime(t *testing.T) {
-	db := testutil.SetupTestDB(t)
+	db := setupTestDB(t)
 	defer db.Close()
 
-	requestRepo := NewRequestRepository(db)
 	problemRepo := NewProblemRepository(db)
 
 	// Create test data with different response times
-	testutil.CreateTestProblem(t, problemRepo,
-		int(testutil.CreateTestRequest(t, requestRepo, "GET", "/slow", 200, 3000)),
+	createTestProblem(t, db,
+		int(createTestRequest(t, db, "GET", "/slow", 200, 3000)),
 		"slow_response", "Too slow", 2000)
-	testutil.CreateTestProblem(t, problemRepo,
-		int(testutil.CreateTestRequest(t, requestRepo, "GET", "/fast", 200, 100)),
+	createTestProblem(t, db,
+		int(createTestRequest(t, db, "GET", "/fast", 200, 100)),
 		"slow_response", "Fast but logged", 2000)
 
 	// Filter for slow responses (>2000ms)
@@ -171,23 +165,22 @@ func TestProblemRepository_FilterByResponseTime(t *testing.T) {
 
 // Test 6: Sort by Response Time
 func TestProblemRepository_SortByResponseTime(t *testing.T) {
-	db := testutil.SetupTestDB(t)
+	db := setupTestDB(t)
 	defer db.Close()
 
-	requestRepo := NewRequestRepository(db)
 	problemRepo := NewProblemRepository(db)
 
 	// Create test data with different response times
-	testutil.CreateTestProblem(t, problemRepo,
-		int(testutil.CreateTestRequest(t, requestRepo, "GET", "/test1", 404, 300)),
+	createTestProblem(t, db,
+		int(createTestRequest(t, db, "GET", "/test1", 404, 300)),
 		"not_found", "Problem 1", 0)
 	time.Sleep(10 * time.Millisecond)
-	testutil.CreateTestProblem(t, problemRepo,
-		int(testutil.CreateTestRequest(t, requestRepo, "GET", "/test2", 404, 100)),
+	createTestProblem(t, db,
+		int(createTestRequest(t, db, "GET", "/test2", 404, 100)),
 		"not_found", "Problem 2", 0)
 	time.Sleep(10 * time.Millisecond)
-	testutil.CreateTestProblem(t, problemRepo,
-		int(testutil.CreateTestRequest(t, requestRepo, "GET", "/test3", 404, 200)),
+	createTestProblem(t, db,
+		int(createTestRequest(t, db, "GET", "/test3", 404, 200)),
 		"not_found", "Problem 3", 0)
 
 	// Sort by response time (descending)
@@ -217,15 +210,14 @@ func TestProblemRepository_SortByResponseTime(t *testing.T) {
 
 // Test 7: Verify Joined Fields
 func TestProblemRepository_JoinedFields(t *testing.T) {
-	db := testutil.SetupTestDB(t)
+	db := setupTestDB(t)
 	defer db.Close()
 
-	requestRepo := NewRequestRepository(db)
 	problemRepo := NewProblemRepository(db)
 
 	// Create test data
-	testutil.CreateTestProblem(t, problemRepo,
-		int(testutil.CreateTestRequest(t, requestRepo, "GET", "/anime/404", 404, 150)),
+	createTestProblem(t, db,
+		int(createTestRequest(t, db, "GET", "/anime/404", 404, 150)),
 		"not_found", "Anime not found", 0)
 
 	// List and verify joined fields are populated
