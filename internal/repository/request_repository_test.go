@@ -14,7 +14,7 @@ func TestRequestRepository_Create(t *testing.T) {
 	repo := NewRequestRepository(db)
 
 	// Create a request and verify it was saved
-	id := createTestRequest(t, repo, "GET", "/anime/1", 200, 1500)
+	id := testutil.CreateTestRequest(t, repo, "GET", "/anime/1", 200, 1500)
 
 	if id <= 0 {
 		t.Errorf("Expected positive ID, got %d", id)
@@ -45,9 +45,9 @@ func TestRequestRepository_FilterByMethod(t *testing.T) {
 	repo := NewRequestRepository(db)
 
 	//Create test data
-	createTestRequest(t, repo, "GET", "/test1", 200, 100)
-	createTestRequest(t, repo, "POST", "/test2", 200, 200)
-	createTestRequest(t, repo, "GET", "/test3", 200, 300)
+	testutil.CreateTestRequest(t, repo, "GET", "/test1", 200, 100)
+	testutil.CreateTestRequest(t, repo, "POST", "/test2", 200, 200)
+	testutil.CreateTestRequest(t, repo, "GET", "/test3", 200, 300)
 
 	//Filter by GET
 	filters := RequestFilters{Method: "GET", Limit: 100}
@@ -74,9 +74,9 @@ func TestRequestRepository_Search(t *testing.T) {
 	repo := NewRequestRepository(db)
 
 	// Create test data
-	createTestRequest(t, repo, "GET", "/anime/1", 200, 100)
-	createTestRequest(t, repo, "GET", "/manga/1", 200, 200)
-	createTestRequest(t, repo, "GET", "/anime/characters", 200, 300)
+	testutil.CreateTestRequest(t, repo, "GET", "/anime/1", 200, 100)
+	testutil.CreateTestRequest(t, repo, "GET", "/manga/1", 200, 200)
+	testutil.CreateTestRequest(t, repo, "GET", "/anime/characters", 200, 300)
 
 	// Search for "anime"
 	filters := RequestFilters{Search: "anime", Limit: 100}

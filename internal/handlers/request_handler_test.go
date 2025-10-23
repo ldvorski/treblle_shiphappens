@@ -5,27 +5,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
-	"treblle_project/internal/models"
 	"treblle_project/internal/repository"
 	"treblle_project/internal/testutil"
 
 	"github.com/gin-gonic/gin"
 )
-
-// Helper to create test request in database
-func createTestRequest(t *testing.T, repo *repository.RequestRepository, method, path string, status int, responseTime int64) {
-	_, err := repo.Create(&models.APIRequest{
-		Method:         method,
-		Path:           path,
-		ResponseStatus: status,
-		ResponseTimeMs: responseTime,
-		CreatedAt:      time.Now(),
-	})
-	if err != nil {
-		t.Fatalf("Failed to create test request: %v", err)
-	}
-}
 
 // Test 1: ListRequests returns JSON with data
 func TestListRequests_ReturnsJSON(t *testing.T) {
@@ -36,8 +20,8 @@ func TestListRequests_ReturnsJSON(t *testing.T) {
 	handler := NewRequestHandler(repo)
 
 	// Create test data
-	createTestRequest(t, repo, "GET", "/anime/1", 200, 150)
-	createTestRequest(t, repo, "POST", "/anime/2", 201, 250)
+	testutil.CreateTestRequest(t, repo, "GET", "/anime/1", 200, 150)
+	testutil.CreateTestRequest(t, repo, "POST", "/anime/2", 201, 250)
 
 	// Setup Gin
 	gin.SetMode(gin.TestMode)
@@ -89,9 +73,9 @@ func TestListRequests_FilterByMethod(t *testing.T) {
 	handler := NewRequestHandler(repo)
 
 	// Create test data
-	createTestRequest(t, repo, "GET", "/test1", 200, 100)
-	createTestRequest(t, repo, "POST", "/test2", 200, 200)
-	createTestRequest(t, repo, "GET", "/test3", 200, 300)
+	testutil.CreateTestRequest(t, repo, "GET", "/test1", 200, 100)
+	testutil.CreateTestRequest(t, repo, "POST", "/test2", 200, 200)
+	testutil.CreateTestRequest(t, repo, "GET", "/test3", 200, 300)
 
 	// Setup Gin
 	gin.SetMode(gin.TestMode)
@@ -133,9 +117,9 @@ func TestListRequests_Search(t *testing.T) {
 	handler := NewRequestHandler(repo)
 
 	// Create test data
-	createTestRequest(t, repo, "GET", "/anime/1", 200, 100)
-	createTestRequest(t, repo, "GET", "/manga/1", 200, 200)
-	createTestRequest(t, repo, "GET", "/anime/characters", 200, 300)
+	testutil.CreateTestRequest(t, repo, "GET", "/anime/1", 200, 100)
+	testutil.CreateTestRequest(t, repo, "GET", "/manga/1", 200, 200)
+	testutil.CreateTestRequest(t, repo, "GET", "/anime/characters", 200, 300)
 
 	// Setup Gin
 	gin.SetMode(gin.TestMode)
@@ -169,7 +153,7 @@ func TestTableView_ReturnsStructuredData(t *testing.T) {
 	handler := NewRequestHandler(repo)
 
 	// Create test data
-	createTestRequest(t, repo, "GET", "/test", 200, 150)
+	testutil.CreateTestRequest(t, repo, "GET", "/test", 200, 150)
 
 	// Setup Gin
 	gin.SetMode(gin.TestMode)
@@ -230,7 +214,7 @@ func TestCSVExport_ReturnsCSV(t *testing.T) {
 	handler := NewRequestHandler(repo)
 
 	// Create test data
-	createTestRequest(t, repo, "GET", "/test", 200, 150)
+	testutil.CreateTestRequest(t, repo, "GET", "/test", 200, 150)
 
 	// Setup Gin
 	gin.SetMode(gin.TestMode)
@@ -273,9 +257,9 @@ func TestListRequests_SortByResponseTime(t *testing.T) {
 	handler := NewRequestHandler(repo)
 
 	// Create test data with different response times
-	createTestRequest(t, repo, "GET", "/slow", 200, 300)
-	createTestRequest(t, repo, "GET", "/fast", 200, 100)
-	createTestRequest(t, repo, "GET", "/medium", 200, 200)
+	testutil.CreateTestRequest(t, repo, "GET", "/slow", 200, 300)
+	testutil.CreateTestRequest(t, repo, "GET", "/fast", 200, 100)
+	testutil.CreateTestRequest(t, repo, "GET", "/medium", 200, 200)
 
 	// Setup Gin
 	gin.SetMode(gin.TestMode)
