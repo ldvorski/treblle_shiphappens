@@ -96,11 +96,11 @@ func (r *RequestRepository) List(filters RequestFilters) ([]models.APIRequest, e
 	var sortBy string
 	switch filters.SortBy {
 	case "response_time":
-		sortBy = "r.response_time_ms DESC"
+		sortBy = "response_time_ms DESC"
 	case "created_at":
-		sortBy = "p.created_at DESC"
+		sortBy = "created_at DESC"
 	default:
-		sortBy = "p.created_at DESC"
+		sortBy = "created_at DESC"
 	}
 	query += " ORDER BY " + sortBy
 

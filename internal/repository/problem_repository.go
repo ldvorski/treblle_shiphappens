@@ -101,7 +101,7 @@ func (r *ProblemRepository) List(filters ProblemFilters) ([]models.Problem, erro
 	var sortBy string
 	switch filters.SortBy {
 	case "response_time":
-		sortBy = "r.response_time_ms DESC"
+		sortBy = "response_time_ms DESC"
 	case "created_at":
 		sortBy = "p.created_at DESC"
 	default:
