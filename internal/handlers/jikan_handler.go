@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const SlowResponseThresholdMs = 2000
+const SlowResponseThresholdMs = 400
 
 type JikanHandler struct {
 	jikanClient *jikan.Client

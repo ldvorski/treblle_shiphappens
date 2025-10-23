@@ -98,10 +98,13 @@ func (r *ProblemRepository) List(filters ProblemFilters) ([]models.Problem, erro
 	}
 
 	// Sorting
-	sortBy := "p.created_at DESC"
-	if filters.SortBy == "response_time" {
+	var sortBy string
+	switch filters.SortBy {
+	case "response_time":
 		sortBy = "r.response_time_ms DESC"
-	} else if filters.SortBy == "created_at" {
+	case "created_at":
+		sortBy = "p.created_at DESC"
+	default:
 		sortBy = "p.created_at DESC"
 	}
 	query += " ORDER BY " + sortBy

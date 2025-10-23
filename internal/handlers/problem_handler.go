@@ -28,6 +28,7 @@ func (h *ProblemHandler) ListProblems(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"data": problems,
 		"meta": gin.H{
+			"count":  len(problems),
 			"limit":  filters.Limit,
 			"offset": filters.Offset,
 		},
@@ -61,6 +62,7 @@ func (h *ProblemHandler) TableView(c *gin.Context) {
 		"columns": []string{"problem_type", "description", "method", "response", "path", "response_time", "threshold_ms", "created_at"},
 		"rows":    tableData,
 		"meta": gin.H{
+			"count":  len(tableData),
 			"limit":  filters.Limit,
 			"offset": filters.Offset,
 		},

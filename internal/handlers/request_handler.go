@@ -28,6 +28,7 @@ func (h *RequestHandler) ListRequests(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"data": requests,
 		"meta": gin.H{
+			"count":  len(requests),
 			"limit":  filters.Limit,
 			"offset": filters.Offset,
 		},
@@ -58,6 +59,7 @@ func (h *RequestHandler) TableView(c *gin.Context) {
 		"columns": []string{"method", "response", "path", "response_time", "created_at"},
 		"rows":    tableData,
 		"meta": gin.H{
+			"count":  len(tableData),
 			"limit":  filters.Limit,
 			"offset": filters.Offset,
 		},
