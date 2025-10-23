@@ -64,14 +64,53 @@ func (h *JikanHandler) ProxyRequest(c *gin.Context) {
 	}
 
 	// Check if this is a slow response and create a problem
-	if metrics.ResponseTimeMs >= SlowResponseThresholdMs {
-		problem := &models.Problem{
+	var problem *models.Problem
+	switch metrics.ResponseStatus {
+	case 400:
+		problem = &models.Problem{
+			RequestID:   int(requestID),
+			ProblemType: "bad_request",
+			Description: "The server cannot or will not process the request.",
+			ThresholdMs: 0,
+			CreatedAt:   time.Now(),
+		}
+	case 403:
+		problem = &models.Problem{
+			RequestID:   int(requestID),
+			ProblemType: "forbidden",
+			Description: "The request was valid, but the server is refusing action.",
+			ThresholdMs: 0,
+			CreatedAt:   time.Now(),
+		}
+	case 404:
+		problem = &models.Problem{
+			RequestID:   int(requestID),
+			ProblemType: "not_found",
+			Description: "The requested resource could not be found.",
+			ThresholdMs: 0,
+			CreatedAt:   time.Now(),
+		}
+	case 418:
+		problem = &models.Problem{
+			RequestID:   int(requestID),
+			ProblemType: "im_a_teapot",
+			Description: "The server is literally a teapot",
+			ThresholdMs: 0,
+			CreatedAt:   time.Now(),
+		}
+
+	}
+
+	if problem == nil && metrics.ResponseTimeMs >= SlowResponseThresholdMs {
+		problem = &models.Problem{
 			RequestID:   int(requestID),
 			ProblemType: "slow_response",
 			Description: fmt.Sprintf("Response time (%dms) exceeded threshold (%dms)", metrics.ResponseTimeMs, SlowResponseThresholdMs),
 			ThresholdMs: SlowResponseThresholdMs,
 			CreatedAt:   time.Now(),
 		}
+	}
+	if problem != nil {
 		_, _ = h.problemRepo.Create(problem) // Don't fail the request if problem logging fails
 	}
 
