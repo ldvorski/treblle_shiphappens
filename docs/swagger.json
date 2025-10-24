@@ -1,0 +1,681 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "API monitoring service that proxies requests to Jikan API and tracks performance metrics and issues.",
+        "title": "Treblle API Monitor",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "lovro.dvorski@outlook.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",
+    "paths": {
+        "/jikan/{path}": {
+            "get": {
+                "description": "Forwards requests to the Jikan API, logs metrics, and detects problems (404, 403, 400, slow responses, etc.). Returns the proxied response with the same status code from Jikan.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jikan",
+                    "external"
+                ],
+                "summary": "Proxy request to Jikan API",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Jikan API path (e.g., /anime/1, /manga/2)",
+                        "name": "path",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully proxied response from Jikan API (returns whatever status Jikan returns: 200, 404, etc.)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to log request to database (request not recorded)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "502": {
+                        "description": "Failed to fetch from Jikan API due to network error (request is still logged with status 0)",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/problems": {
+            "get": {
+                "description": "Get a list of detected failed or problematic API calls with optional filtering, ordering and searching",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems",
+                    "list",
+                    "order",
+                    "search",
+                    "filter"
+                ],
+                "summary": "List detected failed or problematic API calls",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "HTTP method filter (GET, POST, etc.)",
+                        "name": "method",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Response status code filter",
+                        "name": "response",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Minimum response time in milliseconds",
+                        "name": "min_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum response time in milliseconds",
+                        "name": "max_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter problems created after date (format: 2006-01-02)",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter problems created before date (format: 2006-01-02)",
+                        "name": "created_before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search in request path",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by field (response_time, created_at)",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum number of results (default: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of results to skip (default: 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of problems with metadata",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/problems/csv": {
+            "get": {
+                "description": "Download detected failed or problematic API calls as a CSV file, optional filtering, ordering and searching, ready for use or storing",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/csv"
+                ],
+                "tags": [
+                    "problems",
+                    "csv",
+                    "download",
+                    "search",
+                    "filter",
+                    "order"
+                ],
+                "summary": "Export failed and problematic API calls as CSV",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "HTTP method filter (GET, POST, etc.)",
+                        "name": "method",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Response status code filter",
+                        "name": "response",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Minimum response time in milliseconds",
+                        "name": "min_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum response time in milliseconds",
+                        "name": "max_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter problems created after date (format: 2006-01-02)",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter problems created before date (format: 2006-01-02)",
+                        "name": "created_before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search in request path",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by field (response_time, created_at)",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum number of results (default: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of results to skip (default: 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CSV file download",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/problems/table": {
+            "get": {
+                "description": "Get an ordered table of failed or problematic external API calls, optional filtering, ordering and searching, intended for further processing",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "problems",
+                    "order",
+                    "filter",
+                    "search",
+                    "table"
+                ],
+                "summary": "Table of failed or problematic API calls",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "HTTP method filter (GET, POST, etc.)",
+                        "name": "method",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Response status code filter",
+                        "name": "response",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Minimum response time in milliseconds",
+                        "name": "min_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum response time in milliseconds",
+                        "name": "max_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter problems created after date (format: 2006-01-02)",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter problems created before date (format: 2006-01-02)",
+                        "name": "created_before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search in request path",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by field (response_time, created_at)",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum number of results (default: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of results to skip (default: 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Table data with columns and rows",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/requests": {
+            "get": {
+                "description": "Get a list of logged API requests calls with optional filtering, ordering and searching",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "requests",
+                    "filter",
+                    "order",
+                    "search",
+                    "list"
+                ],
+                "summary": "List of API requests successfully completed",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "HTTP method filter (GET, POST, etc.)",
+                        "name": "method",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Response status code filter",
+                        "name": "response",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Minimum response time in milliseconds",
+                        "name": "min_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum response time in milliseconds",
+                        "name": "max_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter requests created after date (format: 2006-01-02)",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter requests created before date (format: 2006-01-02)",
+                        "name": "created_before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search in request path",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by field (response_time, created_at)",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum number of results (default: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of results to skip (default: 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of requests with metadata",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/requests/csv": {
+            "get": {
+                "description": "Download successfully completed API requests as a CSV file, supports filtering, ordering and searching, ready for use",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "text/csv"
+                ],
+                "tags": [
+                    "requests",
+                    "download",
+                    "csv",
+                    "filter",
+                    "order",
+                    "search"
+                ],
+                "summary": "Export successfully completed API requests as CSV",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "HTTP method filter (GET, POST, etc.)",
+                        "name": "method",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Response status code filter",
+                        "name": "response",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Minimum response time in milliseconds",
+                        "name": "min_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum response time in milliseconds",
+                        "name": "max_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter requests created after date (format: 2006-01-02)",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter requests created before date (format: 2006-01-02)",
+                        "name": "created_before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search in request path",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by field (response_time, created_at)",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum number of results (default: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of results to skip (default: 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "CSV file download",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/requests/table": {
+            "get": {
+                "description": "Get successfully completed API request calls formatted for table display after further proccessing with columns and rows, supports ordering, filtering and searching",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "requests",
+                    "table",
+                    "search",
+                    "filter",
+                    "order"
+                ],
+                "summary": "Table of successfully completed API request calls",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "HTTP method filter (GET, POST, etc.)",
+                        "name": "method",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Response status code filter",
+                        "name": "response",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Minimum response time in milliseconds",
+                        "name": "min_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum response time in milliseconds",
+                        "name": "max_time",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter requests created after date (format: 2006-01-02)",
+                        "name": "created_after",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter requests created before date (format: 2006-01-02)",
+                        "name": "created_before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search in request path",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort by field (response_time, created_at)",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Maximum number of results (default: 100)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of results to skip (default: 0)",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Table data with columns and rows",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "description": "Operations for viewing API request call logs",
+            "name": "requests"
+        },
+        {
+            "description": "Operations for viewing detected failed or problematic API calls",
+            "name": "problems"
+        },
+        {
+            "description": "Proxy to Jikan API with monitoring",
+            "name": "jikan"
+        }
+    ]
+}

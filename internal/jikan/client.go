@@ -10,10 +10,19 @@ import (
 
 const BaseURL = "https://api.jikan.moe/v4"
 
+// JikanClient is an interface for making requests to the Jikan API
+// This allows for easy mocking in tests
+type JikanClient interface {
+	ProxyRequest(path string) (*RequestMetrics, error)
+}
+
 type Client struct {
 	httpClient *http.Client
 	baseURL    string
 }
+
+// Ensure Client implements JikanClient
+var _ JikanClient = (*Client)(nil)
 
 type RequestMetrics struct {
 	Method         string
@@ -65,7 +74,7 @@ func (c *Client) ProxyRequest(path string) (*RequestMetrics, error) {
 
 	// Validate JSON response
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		var jsonCheck interface{}
+		var jsonCheck any
 		if err := json.Unmarshal(body, &jsonCheck); err != nil {
 			metrics.Error = err
 			return metrics, fmt.Errorf("invalid JSON response: %w", err)

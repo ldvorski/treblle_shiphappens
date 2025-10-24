@@ -51,7 +51,7 @@ func (r *RequestRepository) Create(req *models.APIRequest) (int64, error) {
 func (r *RequestRepository) List(filters RequestFilters) ([]models.APIRequest, error) {
 	query := "SELECT id, method, path, response_status, response_time_ms, created_at FROM api_requests"
 	where := []string{}
-	args := []interface{}{}
+	args := []any{}
 
 	if filters.Method != "" {
 		where = append(where, "method = ?")
@@ -93,10 +93,13 @@ func (r *RequestRepository) List(filters RequestFilters) ([]models.APIRequest, e
 	}
 
 	// Sorting
-	sortBy := "created_at DESC"
-	if filters.SortBy == "response_time" {
+	var sortBy string
+	switch filters.SortBy {
+	case "response_time":
 		sortBy = "response_time_ms DESC"
-	} else if filters.SortBy == "created_at" {
+	case "created_at":
+		sortBy = "created_at DESC"
+	default:
 		sortBy = "created_at DESC"
 	}
 	query += " ORDER BY " + sortBy
