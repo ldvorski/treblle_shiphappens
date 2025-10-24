@@ -165,7 +165,7 @@ func (h *ProblemHandler) CSVExport(c *gin.Context) {
 	}
 
 	c.Header("Content-Type", "text/csv")
-	c.Header("Content-Disposition", "attachment; filename=requests.csv")
+	c.Header("Content-Disposition", "attachment; filename=problems.csv")
 	c.String(http.StatusOK, buf.String())
 }
 

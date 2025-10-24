@@ -1,4 +1,4 @@
-# Jikan API Request Monitor v1.1.0
+# Jikan API Request Monitor v1.1.1
 
 A Go backend service that proxies requests to the Jikan API (MyAnimeList unofficial API), logs request metrics, and provides REST endpoints to view, sort, filter, and search logged requests. Automatically detects and tracks slow responses (>2 seconds) as "Problem" objects.
 
