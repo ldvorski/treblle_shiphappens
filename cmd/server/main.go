@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 	_ "treblle_project/docs"
 	"treblle_project/internal/database"
 	"treblle_project/internal/handlers"
@@ -15,7 +16,7 @@ import (
 )
 
 // @title           Treblle API Monitor
-// @version         1.0
+// @version         1.0.0
 // @description     API monitoring service that proxies requests to Jikan API and tracks performance metrics and issues.
 // @termsOfService  http://swagger.io/terms/
 
@@ -40,8 +41,14 @@ import (
 // @tag.description Proxy to Jikan API with monitoring
 
 func main() {
-	// Initialize database
-	db, err := database.New("./api_monitor.db")
+	// Initialize database with configurable path
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = "./api_monitor.db"
+	}
+
+	log.Printf("Using database path: %s", dbPath)
+	db, err := database.New(dbPath)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -91,9 +98,12 @@ func main() {
 	// @Produce      json
 	// @Success      200  {object}  map[string]string
 	// @Router       /health [get]
-	r.GET("/health", func(c *gin.Context) {
+	healthHandler := func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
-	})
+	}
+	r.GET("/health", healthHandler)
+	r.HEAD("health", healthHandler)
+
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	log.Println("Server starting on :8080")

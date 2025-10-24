@@ -1,35 +1,41 @@
-# Binaries for programs and plugins
+# Binaries
 *.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-
-# Test binary, built with `go test -c`
-*.test
-
-# Output of the go coverage tool
-*.out
-
-# Dependency directories
-vendor/
-
-# Go workspace file
-go.work
+api_monitor
+api_monitor.exe
 
 # Database files
 *.db
-*.sqlite
-*.sqlite3
+*.db-shm
+*.db-wal
 
-# IDE
+# Data directory (contains persistent database)
+data/
+
+# Go build artifacts
+vendor/
+*.test
+*.prof
+*.out
+
+# IDE and editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-
-# OS
 .DS_Store
-Thumbs.db
 
+# OS specific
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+
+# Backup files
+backups/
+*.backup
