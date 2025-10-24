@@ -41,8 +41,8 @@ A Go backend service that proxies requests to the Jikan API (MyAnimeList unoffic
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd treblle_project
+git clone https://github.com/ldvorski/treblle_shiphappens.git
+cd treblle_shiphappens
 ```
 
 2. Install dependencies:
@@ -122,7 +122,7 @@ curl "http://localhost:8080/api/requests?response=404"
 curl "http://localhost:8080/api/requests?search=characters"
 
 # Combine filters
-curl "http://localhost:8080/api/requests?sort=response_time&min_time=500&method=GET&limit=20"
+curl "http://localhost:8080/api/requests?sort=response_time&min_time=200&method=GET&limit=20"
 ```
 
 #### Table View
@@ -136,7 +136,18 @@ Returns the same data in a table-structured format with columns and rows.
 curl http://localhost:8080/api/requests/table?limit=10
 ```
 
-### View Problems (Slow Responses)
+#### CSV Export
+```bash
+GET /api/requests/csv
+```
+Returns the same data in a CSV format
+
+**Example:**
+```bash
+curl http://localhost:8080/api/requests/csv?limit=10
+```
+
+### View Problems (Slow Responses, Failed Requests)
 
 #### List View
 ```bash
@@ -169,6 +180,17 @@ Returns problems in a table-structured format.
 **Example:**
 ```bash
 curl http://localhost:8080/api/problems/table
+```
+
+#### CSV Export
+```bash
+GET /api/problems/csv
+```
+Returns the same data in a CSV format
+
+**Example:**
+```bash
+curl http://localhost:8080/api/problems/csv
 ```
 
 ## Response Examples
@@ -280,7 +302,7 @@ go test ./...
 ## Notes
 
 - The database file `api_monitor.db` is created automatically in the project root
-- Slow response threshold is set to 2000ms (2 seconds)
+- Slow response threshold is set to 400ms (0.4 seconds)
 - Default pagination limit is 100 records
 - All timestamps are stored in UTC
 - The Jikan API has rate limiting; be mindful when making requests
