@@ -41,7 +41,7 @@ A Go backend service that proxies requests to the Jikan API (MyAnimeList unoffic
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/ldvorski/treblle_shiphappens.git
 cd treblle_project
 ```
 
