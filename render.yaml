@@ -1,0 +1,29 @@
+#render.yaml - Render.com deployment config
+services:
+  - type: web
+    name: trebble-api-monitor
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: frankfurt
+
+    envVars:
+      - key: GIN_MODE
+        value: release
+      - key: DB_PATH
+        value: /var/data/api_monitor.db
+      - key: TZ
+        value: UTC
+      - key: PORT
+        value: 8080
+
+    # Persistent disk for SQLite db
+    disk:
+      name: database
+      mountPath: /var/data
+      sizeGB: 1
+    
+    healthCheckPath: /health
+
+    autoDeploy: true
