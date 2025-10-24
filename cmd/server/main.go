@@ -16,7 +16,7 @@ import (
 )
 
 // @title           Treblle API Monitor
-// @version         1.0.0
+// @version         1.1.0
 // @description     API monitoring service that proxies requests to Jikan API and tracks performance metrics and issues.
 // @termsOfService  http://swagger.io/terms/
 

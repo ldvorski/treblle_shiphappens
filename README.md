@@ -1,4 +1,4 @@
-# Jikan API Request Monitor v1.0.0
+# Jikan API Request Monitor v1.1.0
 
 A Go backend service that proxies requests to the Jikan API (MyAnimeList unofficial API), logs request metrics, and provides REST endpoints to view, sort, filter, and search logged requests. Automatically detects and tracks slow responses (>2 seconds) as "Problem" objects.
 
@@ -286,6 +286,38 @@ treblle_project/
 └── README.md
 ```
 
+## Deployment
+
+### Deploy to Render.com
+
+This application is configured for one-click deployment to Render.com.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+
+**Manual Deployment:**
+
+1. Fork or clone this repository to your GitHub account
+2. Create a [Render.com](https://render.com) account
+3. Click "New +" → "Blueprint"
+4. Connect your GitHub repository
+5. Render will automatically detect `render.yaml` and configure the service
+6. Click "Apply" to deploy
+
+**Environment Variables:**
+- `GIN_MODE`: Set to `release` for production
+- `DB_PATH`: Database file path (default: `/var/data/api_monitor.db`)
+- `PORT`: Application port (default: `8080`)
+
+**Database:**
+A persistent disk is automatically created and mounted at `/var/data` for SQLite database storage.
+
+**Accessing Your Deployment:**
+Your API will be available at: `https://trebble-api-monitor.onrender.com`
+
+### Deploy with Docker Compose (Local/VPS)
+
+See the Docker section below for local deployment.
+
 ## Development
 
 ### Building
@@ -298,6 +330,34 @@ go build -o api_monitor cmd/server/main.go
 ```bash
 go test ./...
 ```
+
+## Docker Deployment
+
+### Local Development with Docker
+
+```bash
+# Build and start
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop
+docker-compose down
+```
+
+### Docker Configuration
+
+The application includes:
+- **Multi-stage Dockerfile** for optimized image size
+- **docker-compose.yml** for easy local deployment
+- **Persistent volume** for SQLite database at `./data/`
+- **Health checks** for container monitoring
+
+**Environment Variables:**
+- `DB_PATH`: Database file path (default: `./api_monitor.db`)
+- `GIN_MODE`: Gin framework mode (`debug` or `release`)
+- `TZ`: Timezone (default: `UTC`)
 
 ## Notes
 

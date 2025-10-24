@@ -1,0 +1,57 @@
+# Binaries
+*.exe
+api_monitor
+api_monitor.exe
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Documentation
+README.md
+API_DOCUMENTATION.md
+CHANGELOG.md
+
+# Test files
+*_test.go
+internal/testutil/
+
+# Data directory
+data/
+
+# OS specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Docker files themselves
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Render config
+render.yaml
+
+# Build artifacts
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.log
+
